@@ -30,7 +30,6 @@ static PyObject *sym(PyObject *self, PyObject *args) {
             return NULL;
         }
     }
-    
 
     for (i = 0; i < n; i++) {
         py_list = PyList_GetItem(py_X, i); /* get the row */
@@ -42,7 +41,13 @@ static PyObject *sym(PyObject *self, PyObject *args) {
     }
     /* get A from c code, and then n */
     A= sym(X);
-
+    
+    /*freeing X*/
+    for(i=0;i<n;i++){
+        free(X[i]);
+    }
+    free(X);
+    
     py_A = Pypy_list_New(n); /* create a py_list */
     if (py_A == NULL){
         printf("An Error Has Occurred\n");
@@ -61,6 +66,12 @@ static PyObject *sym(PyObject *self, PyObject *args) {
         }
         Pypy_list_SetItem(py_A, i, Py_BuildValue("O", py_list)); /* adding the row */
     }
+    
+    /*freeing A*/
+    for(i=0;i<n;i++){
+        free(A[i]);
+    }
+    free(A);
     return py_A;
 }
 
@@ -106,7 +117,7 @@ static PyObject *ddg(PyObject *self, PyObject *args) {
     }
 
     D = ddg(X);
-    /*freeing A*/
+    /*freeing X*/
     for(i=0;i<n;i++){
         free(X[i]);
     }
@@ -175,7 +186,7 @@ static PyObject *ddg(PyObject *self, PyObject *args) {
     }
 
     W = ddg(X);
-    /*freeing A*/
+    /*freeing X*/
     for(i=0;i<n;i++){
         free(X[i]);
     }
