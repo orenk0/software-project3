@@ -11,7 +11,12 @@ static PyObject *sym(PyObject *self, PyObject *args) {
         printf("An Error Has Occurred1\n");
         return NULL;
     }
-
+    if (!PyList_Check(py_X)){ /*check if its an instance of a subtype of list*/
+        printf("An Error Has Occurred2\n");
+        return NULL;
+    }
+    
+    n = PyObject_Length(py_X);
     X = (**double)malloc(sizeof(*double)*n);
     for (i = 0; i < n; i++)
     {
@@ -29,9 +34,8 @@ static PyObject *sym(PyObject *self, PyObject *args) {
     }
     /* get A from c code, and then n */
     A= sym(X);
-    n= sizeof(math.sqrt(A/sizeof(double)));
 
-    py_A = Pypy_list_New(K); /* create a py_list */
+    py_A = Pypy_list_New(n); /* create a py_list */
     if (py_A == NULL){
         printf("An Error Has Occurred\n");
         return NULL;
