@@ -8,19 +8,25 @@ static PyObject *sym(PyObject *self, PyObject *args) {
     double **X,**A;
     /* check if we managed to pass them well*/
     if (!PyArg_ParseTuple(args, "O", &py_X)){
-        printf("An Error Has Occurred1\n");
+        printf("An Error Has Occurred\n");
         return NULL;
     }
     if (!PyList_Check(py_X)){ /*check if its an instance of a subtype of list*/
-        printf("An Error Has Occurred2\n");
+        printf("An Error Has Occurred\n");
         return NULL;
     }
     
     n = PyObject_Length(py_X);
     X = (**double)malloc(sizeof(*double)*n);
+    if(X == NULL){
+        printf("An Error Has Occurred\n");
+    }
     for (i = 0; i < n; i++)
     {
         X[i] = (*double)malloc(sizeof(double)*n);
+        if(X[i]==NULL){
+            printf("An Error Has Occurred\n");
+        }
     }
     
 
@@ -53,9 +59,6 @@ static PyObject *sym(PyObject *self, PyObject *args) {
         }
         Pypy_list_SetItem(py_A, i, Py_BuildValue("O", py_list)); /* adding the row */
     }
-    /*freeing filename*/
-    Py_DECREF(encodedString);
-    free(filename);
     return py_A;
 }
 
@@ -65,11 +68,11 @@ static PyObject *ddg(PyObject *self, PyObject *args) {
     double **X,**D;
     /* check if we managed to pass them well*/
     if (!PyArg_ParseTuple(args, "O", &py_X)){
-        printf("An Error Has Occurred1\n");
+        printf("An Error Has Occurred\n");
         return NULL;
     }
     if (!PyList_Check(py_X)){ /*check if its an instance of a subtype of list*/
-        printf("An Error Has Occurred2\n");
+        printf("An Error Has Occurred\n");
         return NULL;
     }
     /*getting n*/
@@ -77,9 +80,15 @@ static PyObject *ddg(PyObject *self, PyObject *args) {
 
     /*allocating spcae*/
     X = (**double)malloc(sizeof(*double)*n);
+    if(X == NULL){
+        printf("An Error Has Occurred\n");
+    }
     for (i = 0; i < n; i++)
     {
         X[i] = (*double)malloc(sizeof(double)*n);
+        if(X[i]==NULL){
+            printf("An Error Has Occurred\n");
+        }
     }
     
 
@@ -126,11 +135,11 @@ static PyObject *ddg(PyObject *self, PyObject *args) {
     double **X,**D;
     /* check if we managed to pass them well*/
     if (!PyArg_ParseTuple(args, "O", &py_X)){
-        printf("An Error Has Occurred1\n");
+        printf("An Error Has Occurred\n");
         return NULL;
     }
     if (!PyList_Check(py_X)){ /*check if its an instance of a subtype of list*/
-        printf("An Error Has Occurred2\n");
+        printf("An Error Has Occurred\n");
         return NULL;
     }
     /*getting n*/
@@ -138,9 +147,15 @@ static PyObject *ddg(PyObject *self, PyObject *args) {
 
     /*allocating spcae*/
     X = (**double)malloc(sizeof(*double)*n);
+    if(X == NULL){
+        printf("An Error Has Occurred\n");
+    }
     for (i = 0; i < n; i++)
     {
         X[i] = (*double)malloc(sizeof(double)*n);
+        if(X[i]==NULL){
+            printf("An Error Has Occurred\n");
+        }
     }
     
 
@@ -187,11 +202,11 @@ static PyObject *symnmf(PyObject *self, PyObject *args) {
     double **W,**IH,**NH;/*IH stands for init H,NH stands for new H*/
     /* check if we managed to pass them well*/
     if (!PyArg_ParseTuple(args, "OOi", &py_W,&py_IH,&k)){
-        printf("An Error Has Occurred1\n");
+        printf("An Error Has Occurred\n");
         return NULL;
     }
     if (!PyList_Check(py_W)||!PyList_Check(py_IH)){ /*check if its an instance of a subtype of list*/
-        printf("An Error Has Occurred2\n");
+        printf("An Error Has Occurred\n");
         return NULL;
     }
     /*getting n*/
@@ -199,14 +214,26 @@ static PyObject *symnmf(PyObject *self, PyObject *args) {
 
     /*allocating space for W,IH*/
     W = (**double)malloc(sizeof(*double)*n);
+    if(W== NULL){
+        printf("An Error Has Occurred\n");
+    }
     for (i = 0; i < n; i++)
     {
         W[i] = (*double)malloc(sizeof(double)*n);
+        if(W[i]== NULL){
+            printf("An Error Has Occurred\n");
+        }
     }
     IH = (**double)malloc(sizeof(*double)*n);
+    if(IH== NULL){
+        printf("An Error Has Occurred\n");
+    }
     for (i = 0; i < n; i++)
     {
         IH[i] = (*double)malloc(sizeof(double)*k);
+        if(IH[i]== NULL){
+            printf("An Error Has Occurred\n");
+        }
     }
     
 
