@@ -205,7 +205,7 @@ static PyObject *ddg(PyObject *self, PyObject *args) {
         }
         Pypy_list_SetItem(py_W, i, Py_BuildValue("O", py_list)); /* adding the row */
     }
-    /*freeing D*/
+    /*freeing W*/
     for(i=0;i<n;i++){
         free(W[i]);
     }
@@ -275,7 +275,7 @@ static PyObject *symnmf(PyObject *self, PyObject *args) {
         }
     }
 
-    NH = symnmf(W,IH);
+    NH = symnmf(W,IH,k);
     /*freeing space for W,IH*/
     for(i=0;i<n;i++){
         free(W[i]);
@@ -301,7 +301,7 @@ static PyObject *symnmf(PyObject *self, PyObject *args) {
         }
         Pypy_list_SetItem(py_NH, i, Py_BuildValue("O", py_list)); /* adding the row */
     }
-    /*freeing space for NH*/
+    /*freeing space of NH*/
     for(i=0;i<n;i++){
         free(NH[i]);
     }
