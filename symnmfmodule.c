@@ -20,12 +20,14 @@ static PyObject *sym(PyObject *self, PyObject *args) {
     X = (**double)malloc(sizeof(*double)*n);
     if(X == NULL){
         printf("An Error Has Occurred\n");
+        return NULL;
     }
     for (i = 0; i < n; i++)
     {
         X[i] = (*double)malloc(sizeof(double)*n);
         if(X[i]==NULL){
             printf("An Error Has Occurred\n");
+            return NULL;
         }
     }
     
@@ -82,12 +84,14 @@ static PyObject *ddg(PyObject *self, PyObject *args) {
     X = (**double)malloc(sizeof(*double)*n);
     if(X == NULL){
         printf("An Error Has Occurred\n");
+        return NULL;
     }
     for (i = 0; i < n; i++)
     {
         X[i] = (*double)malloc(sizeof(double)*n);
         if(X[i]==NULL){
             printf("An Error Has Occurred\n");
+            return NULL;
         }
     }
     
@@ -149,12 +153,14 @@ static PyObject *ddg(PyObject *self, PyObject *args) {
     X = (**double)malloc(sizeof(*double)*n);
     if(X == NULL){
         printf("An Error Has Occurred\n");
+        return NULL;
     }
     for (i = 0; i < n; i++)
     {
         X[i] = (*double)malloc(sizeof(double)*n);
         if(X[i]==NULL){
             printf("An Error Has Occurred\n");
+            return NULL;
         }
     }
     
@@ -216,23 +222,27 @@ static PyObject *symnmf(PyObject *self, PyObject *args) {
     W = (**double)malloc(sizeof(*double)*n);
     if(W== NULL){
         printf("An Error Has Occurred\n");
+        return NULL;
     }
     for (i = 0; i < n; i++)
     {
         W[i] = (*double)malloc(sizeof(double)*n);
         if(W[i]== NULL){
             printf("An Error Has Occurred\n");
+            return NULL;
         }
     }
     IH = (**double)malloc(sizeof(*double)*n);
     if(IH== NULL){
         printf("An Error Has Occurred\n");
+        return NULL;
     }
     for (i = 0; i < n; i++)
     {
         IH[i] = (*double)malloc(sizeof(double)*k);
         if(IH[i]== NULL){
             printf("An Error Has Occurred\n");
+            return NULL;
         }
     }
     
