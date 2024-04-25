@@ -276,7 +276,7 @@ static PyObject *symnmf(PyObject *self, PyObject *args) {
     }
 
     NH = symnmf(W,IH,k);
-    /*freeing space for W,IH*/
+    /*freeing space of W,IH*/
     for(i=0;i<n;i++){
         free(W[i]);
     }
