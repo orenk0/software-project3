@@ -6,7 +6,7 @@ import math
 
 np.random.seed(0)
 #get the data
-filename= sys.argv[len(sys.argv)-1]
+filename= sys.argv[3]
 X = pd.read_csv(filename, header=None)
 #get a legal random value
 def lran(x,m,k):
