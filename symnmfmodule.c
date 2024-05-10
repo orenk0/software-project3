@@ -1,4 +1,5 @@
 #define PY_SSIZE_T_CLEAN
+#include <stdlib.h>
 #include <Python.h>
 #include "symnmf.h"
 
@@ -9,11 +10,11 @@ static PyObject *sym(PyObject *self, PyObject *args) {
     /* check if we managed to pass them well*/
     if (!PyArg_ParseTuple(args, "O", &py_X)){
         printf("An Error Has Occurred\n");
-        return NULL;
+        exit(1);
     }
     if (!PyList_Check(py_X)){ /*check if its an instance of a subtype of list*/
         printf("An Error Has Occurred\n");
-        return NULL;
+        exit(1);
     }
     
     n = PyObject_Length(py_X);
@@ -22,14 +23,14 @@ static PyObject *sym(PyObject *self, PyObject *args) {
     X = (**double)malloc(sizeof(*double)*n);
     if(X == NULL){
         printf("An Error Has Occurred\n");
-        return NULL;
+        exit(1);
     }
     for (i = 0; i < n; i++)
     {
         X[i] = (*double)malloc(sizeof(double)*k);
         if(X[i]==NULL){
             printf("An Error Has Occurred\n");
-            return NULL;
+            exit(1);
         }
     }
 
@@ -53,14 +54,14 @@ static PyObject *sym(PyObject *self, PyObject *args) {
     py_A = Pypy_list_New(n); /* create a py_list */
     if (py_A == NULL){
         printf("An Error Has Occurred\n");
-        return NULL;
+        exit(1);
     }
     for (i = 0; i < n; i++)
     {
         py_list = Pypy_list_New(n); /* create a row */
         if (py_list == NULL){
        	    printf("An Error Has Occurred\n");
-            return NULL;
+            exit(1);
         }
         for (j = 0; j < n; j++)/*copying the row*/
         {
@@ -84,11 +85,11 @@ static PyObject *ddg(PyObject *self, PyObject *args) {
     /* check if we managed to pass them well*/
     if (!PyArg_ParseTuple(args, "O", &py_X)){
         printf("An Error Has Occurred\n");
-        return NULL;
+        exit(1);
     }
     if (!PyList_Check(py_X)){ /*check if its an instance of a subtype of list*/
         printf("An Error Has Occurred\n");
-        return NULL;
+        exit(1);
     }
     /*getting n*/
     n = PyObject_Length(py_X);
@@ -98,14 +99,14 @@ static PyObject *ddg(PyObject *self, PyObject *args) {
     X = (**double)malloc(sizeof(*double)*n);
     if(X == NULL){
         printf("An Error Has Occurred\n");
-        return NULL;
+        exit(1);
     }
     for (i = 0; i < n; i++)
     {
         X[i] = (*double)malloc(sizeof(double)*k);
         if(X[i]==NULL){
             printf("An Error Has Occurred\n");
-            return NULL;
+            exit(1);
         }
     }
 
@@ -130,7 +131,7 @@ static PyObject *ddg(PyObject *self, PyObject *args) {
         py_list = Pypy_list_New(n); /* create a row */
         if (py_list == NULL){
        	    printf("An Error Has Occurred\n");
-            return NULL;
+            exit(1);
         }
         for (j = 0; j < n; j++)/*copying the row*/
         {
@@ -153,11 +154,11 @@ static PyObject *norm(PyObject *self, PyObject *args) {
     /* check if we managed to pass them well*/
     if (!PyArg_ParseTuple(args, "O", &py_X)){
         printf("An Error Has Occurred\n");
-        return NULL;
+        exit(1);
     }
     if (!PyList_Check(py_X)){ /*check if its an instance of a subtype of list*/
         printf("An Error Has Occurred\n");
-        return NULL;
+        exit(1);
     }
     /*getting n*/
     n = PyObject_Length(py_X);
@@ -167,14 +168,14 @@ static PyObject *norm(PyObject *self, PyObject *args) {
     X = (**double)malloc(sizeof(*double)*n);
     if(X == NULL){
         printf("An Error Has Occurred\n");
-        return NULL;
+        exit(1);
     }
     for (i = 0; i < n; i++)
     {
         X[i] = (*double)malloc(sizeof(double)*k);
         if(X[i]==NULL){
             printf("An Error Has Occurred\n");
-            return NULL;
+            exit(1);
         }
     }
 
@@ -199,7 +200,7 @@ static PyObject *norm(PyObject *self, PyObject *args) {
         py_list = Pypy_list_New(n); /* create a row */
         if (py_list == NULL){
        	    printf("An Error Has Occurred\n");
-            return NULL;
+            exit(1);
         }
         for (j = 0; j < n; j++)/*copying the row*/
         {
@@ -222,11 +223,11 @@ static PyObject *symnmf(PyObject *self, PyObject *args) {
     /* check if we managed to pass them well*/
     if (!PyArg_ParseTuple(args, "OOi", &py_W,&py_IH,&k)){
         printf("An Error Has Occurred\n");
-        return NULL;
+        exit(1);
     }
     if (!PyList_Check(py_W)||!PyList_Check(py_IH)){ /*check if its an instance of a subtype of list*/
         printf("An Error Has Occurred\n");
-        return NULL;
+        exit(1);
     }
     /*getting n*/
     n = PyObject_Length(py_W);
@@ -235,27 +236,27 @@ static PyObject *symnmf(PyObject *self, PyObject *args) {
     W = (**double)malloc(sizeof(*double)*n);
     if(W== NULL){
         printf("An Error Has Occurred\n");
-        return NULL;
+        exit(1);
     }
     for (i = 0; i < n; i++)
     {
         W[i] = (*double)malloc(sizeof(double)*n);
         if(W[i]== NULL){
             printf("An Error Has Occurred\n");
-            return NULL;
+            exit(1);
         }
     }
     IH = (**double)malloc(sizeof(*double)*n);
     if(IH== NULL){
         printf("An Error Has Occurred\n");
-        return NULL;
+        exit(1);
     }
     for (i = 0; i < n; i++)
     {
         IH[i] = (*double)malloc(sizeof(double)*k);
         if(IH[i]== NULL){
             printf("An Error Has Occurred\n");
-            return NULL;
+            exit(1);
         }
     }
     
@@ -295,7 +296,7 @@ static PyObject *symnmf(PyObject *self, PyObject *args) {
         py_list = Pypy_list_New(k); /* create a row */
         if (py_list == NULL){
        	    printf("An Error Has Occurred\n");
-            return NULL;
+            exit(1);
         }
         for (j = 0; j < k; j++)/*copying the row*/
         {
