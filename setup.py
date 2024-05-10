@@ -1,8 +1,9 @@
 from setuptools import Extension, setup
 
+## might have to add ,'symnmf.h'in source(delete before submition)
 module = Extension("mysymnmf",
                   sources=[
-                    'symnmf.c','symnmfmodule.c','symnmf.h'
+                    'symnmf.c','symnmfmodule.c'
                   ])
 setup(name='mysymnmf',
      version='1.0',
