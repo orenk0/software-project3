@@ -1,6 +1,6 @@
 #define PY_SSIZE_T_CLEAN
-#include <stdlib.h>
 #include <Python.h>
+#include <stdlib.h>
 #include "symnmf.h"
 
 static PyObject *sym(PyObject *self, PyObject *args) {
