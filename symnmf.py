@@ -14,7 +14,8 @@ def lran(x,m,k):
     return np.random.uniform(0,2*math.sqrt(m/k))
 rfunc = np.vectorize(lran)
 #if necessery(delete before submiting): X = df.values.tolist()
-if len(sys.argv) == 4:
+goal = sys.argv[2]
+if(goal == "symnmf"):
     W = ms.norm(X)
     k = sys.argv[1]
     m = np.average(np.array(W))
@@ -22,13 +23,12 @@ if len(sys.argv) == 4:
     H = rfunc(H,m,k)
     #if necessery(delete before submiting): H = H.tolist()
     M = ms.symnmf(W,H,k)
-if len(sys.argv) == 3:
-    if(sys.argv[1]=="sym"):
-        M = ms.sym(X)
-    if(sys.argv[1]=="ddg"):
-        M = ms.ddg(X)
-    if(sys.argv[1]=="norm"):
-        M = ms.norm(X)
+if(goal=="sym"):
+    M = ms.sym(X)
+if(goal=="ddg"):
+    M = ms.ddg(X)
+if(goal=="norm"):
+    M = ms.norm(X)
 for i in range(len(M)):
         for j in range(len(M[i])-1):
             print('{:.4f}'.format(M[i][j]),end=",")
