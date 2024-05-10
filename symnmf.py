@@ -4,7 +4,6 @@ import numpy as np
 import pandas as pd
 import math
 
-assert((len(sys.argv)==4)or(len(sys.argv)==3)), "An Error Has Occurred"
 np.random.seed(0)
 #get the data
 filename= sys.argv[len(sys.argv)-1]
