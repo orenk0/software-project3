@@ -4,7 +4,7 @@
 
 static PyObject *sym(PyObject *self, PyObject *args) {
     PyObject *py_X,*py_list,*py_A;
-    int i,j,n;
+    int i,j,n,d;
     double **X,**A;
     /* check if we managed to pass them well*/
     if (!PyArg_ParseTuple(args, "O", &py_X)){
@@ -17,6 +17,8 @@ static PyObject *sym(PyObject *self, PyObject *args) {
     }
     
     n = PyObject_Length(py_X);
+    d = PyObject_Length(PyList_GetItem(py_X, 0));
+    /*allocating spcae*/
     X = (**double)malloc(sizeof(*double)*n);
     if(X == NULL){
         printf("An Error Has Occurred\n");
@@ -24,7 +26,7 @@ static PyObject *sym(PyObject *self, PyObject *args) {
     }
     for (i = 0; i < n; i++)
     {
-        X[i] = (*double)malloc(sizeof(double)*n);
+        X[i] = (*double)malloc(sizeof(double)*k);
         if(X[i]==NULL){
             printf("An Error Has Occurred\n");
             return NULL;
@@ -34,13 +36,13 @@ static PyObject *sym(PyObject *self, PyObject *args) {
     for (i = 0; i < n; i++) {
         py_list = PyList_GetItem(py_X, i); /* get the row */
         /* save element in matrix */
-        for (j = 0; j < n; j++) {
+        for (j = 0; j < k; j++) {
             py_tmp = PyList_GetItem(py_list, j);
             X[i][j] = PyFloat_AsDouble(py_tmp);
         }
     }
     /* get A from c code, and then n */
-    A= sym(X);
+    A= sym(X,n,d);
     
     /*freeing X*/
     for(i=0;i<n;i++){
@@ -77,7 +79,7 @@ static PyObject *sym(PyObject *self, PyObject *args) {
 
 static PyObject *ddg(PyObject *self, PyObject *args) {
     PyObject *py_X,*py_list,*py_D,*py_tmp;
-    int i,j,n;
+    int i,j,n,d;
     double **X,**D;
     /* check if we managed to pass them well*/
     if (!PyArg_ParseTuple(args, "O", &py_X)){
@@ -90,7 +92,8 @@ static PyObject *ddg(PyObject *self, PyObject *args) {
     }
     /*getting n*/
     n = PyObject_Length(py_X);
-
+    d = PyObject_Length(PyList_GetItem(py_X, 0));
+    
     /*allocating spcae*/
     X = (**double)malloc(sizeof(*double)*n);
     if(X == NULL){
@@ -99,24 +102,23 @@ static PyObject *ddg(PyObject *self, PyObject *args) {
     }
     for (i = 0; i < n; i++)
     {
-        X[i] = (*double)malloc(sizeof(double)*n);
+        X[i] = (*double)malloc(sizeof(double)*k);
         if(X[i]==NULL){
             printf("An Error Has Occurred\n");
             return NULL;
         }
     }
-    
 
     for (i = 0; i < n; i++) {
         py_list = PyList_GetItem(py_X, i); /* get the row */
         /* save element in matrix */
-        for (j = 0; j < n; j++) {
+        for (j = 0; j < k; j++) {
             py_tmp = PyList_GetItem(py_list, j);
             X[i][j] = PyFloat_AsDouble(py_tmp);
         }
     }
 
-    D = ddg(X);
+    D = ddg(X,n,k);
     /*freeing X*/
     for(i=0;i<n;i++){
         free(X[i]);
@@ -144,10 +146,10 @@ static PyObject *ddg(PyObject *self, PyObject *args) {
     return py_D;
 }
 
-static PyObject *ddg(PyObject *self, PyObject *args) {
-    PyObject *py_X,*py_list,*py_D,*py_tmp;
-    int i,j,n;
-    double **X,**D;
+static PyObject *norm(PyObject *self, PyObject *args) {
+    PyObject *py_X,*py_list,*py_W,*py_tmp;
+    int i,j,n,d;
+    double **X,**W;
     /* check if we managed to pass them well*/
     if (!PyArg_ParseTuple(args, "O", &py_X)){
         printf("An Error Has Occurred\n");
@@ -159,7 +161,8 @@ static PyObject *ddg(PyObject *self, PyObject *args) {
     }
     /*getting n*/
     n = PyObject_Length(py_X);
-
+    d = PyObject_Length(PyList_GetItem(py_X, 0));
+    
     /*allocating spcae*/
     X = (**double)malloc(sizeof(*double)*n);
     if(X == NULL){
@@ -168,24 +171,23 @@ static PyObject *ddg(PyObject *self, PyObject *args) {
     }
     for (i = 0; i < n; i++)
     {
-        X[i] = (*double)malloc(sizeof(double)*n);
+        X[i] = (*double)malloc(sizeof(double)*k);
         if(X[i]==NULL){
             printf("An Error Has Occurred\n");
             return NULL;
         }
     }
-    
 
     for (i = 0; i < n; i++) {
         py_list = PyList_GetItem(py_X, i); /* get the row */
         /* save element in matrix */
-        for (j = 0; j < n; j++) {
+        for (j = 0; j < k; j++) {
             py_tmp = PyList_GetItem(py_list, j);
             X[i][j] = PyFloat_AsDouble(py_tmp);
         }
     }
 
-    W = ddg(X);
+    W = norm(X,n,d);
     /*freeing X*/
     for(i=0;i<n;i++){
         free(X[i]);
@@ -275,7 +277,7 @@ static PyObject *symnmf(PyObject *self, PyObject *args) {
         }
     }
 
-    NH = symnmf(W,IH,k);
+    NH = symnmf(W,IH,n,k);
     /*freeing space of W,IH*/
     for(i=0;i<n;i++){
         free(W[i]);
