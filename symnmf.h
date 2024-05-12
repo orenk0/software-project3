@@ -4,9 +4,9 @@
 #include <math.h>
 
 /*X is the datapoints*/
-double** sym(double** X,int n,int d);
-double** ddg(double** X,int n,int d);
-double** norm(double** X,int n,int d);
-double** symnmf(double** W,double** H,int n,int k);
+double** symg(double** X,int n,int d);
+double** ddgg(double** X,int n,int d);
+double** normg(double** X,int n,int d);
+double** symnmfg(double** W,double** H,int n,int k);
 
 #endif

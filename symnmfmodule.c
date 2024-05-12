@@ -4,7 +4,7 @@
 #include "symnmf.h"
 
 static PyObject *sym(PyObject *self, PyObject *args) {
-    PyObject *py_X,*py_list,*py_A;
+    PyObject *py_X,*py_list,*py_A,*py_tmp;
     int i,j,n,d;
     double **X,**A;
     /* check if we managed to pass them well*/
@@ -20,14 +20,14 @@ static PyObject *sym(PyObject *self, PyObject *args) {
     n = PyObject_Length(py_X);
     d = PyObject_Length(PyList_GetItem(py_X, 0));
     /*allocating spcae*/
-    X = (**double)malloc(sizeof(*double)*n);
+    X = (double**)malloc(sizeof(double*)*n);
     if(X == NULL){
         printf("An Error Has Occurred\n");
         exit(1);
     }
     for (i = 0; i < n; i++)
     {
-        X[i] = (*double)malloc(sizeof(double)*k);
+        X[i] = (double*)malloc(sizeof(double)*d);
         if(X[i]==NULL){
             printf("An Error Has Occurred\n");
             exit(1);
@@ -37,13 +37,13 @@ static PyObject *sym(PyObject *self, PyObject *args) {
     for (i = 0; i < n; i++) {
         py_list = PyList_GetItem(py_X, i); /* get the row */
         /* save element in matrix */
-        for (j = 0; j < k; j++) {
+        for (j = 0; j < d; j++) {
             py_tmp = PyList_GetItem(py_list, j);
             X[i][j] = PyFloat_AsDouble(py_tmp);
         }
     }
     /* get A from c code, and then n */
-    A= sym(X,n,d);
+    A= symg(X,n,d);
     
     /*freeing X*/
     for(i=0;i<n;i++){
@@ -51,23 +51,23 @@ static PyObject *sym(PyObject *self, PyObject *args) {
     }
     free(X);
     
-    py_A = Pypy_list_New(n); /* create a py_list */
+    py_A = PyList_New(n); /* create a py_list */
     if (py_A == NULL){
         printf("An Error Has Occurred\n");
         exit(1);
     }
     for (i = 0; i < n; i++)
     {
-        py_list = Pypy_list_New(n); /* create a row */
+        py_list = PyList_New(n); /* create a row */
         if (py_list == NULL){
        	    printf("An Error Has Occurred\n");
             exit(1);
         }
         for (j = 0; j < n; j++)/*copying the row*/
         {
-            Pypy_list_SetItem(py_list, j, Py_BuildValue("d", A[i][j]));
+            PyList_SetItem(py_list, j, Py_BuildValue("d", A[i][j]));
         }
-        Pypy_list_SetItem(py_A, i, Py_BuildValue("O", py_list)); /* adding the row */
+        PyList_SetItem(py_A, i, Py_BuildValue("O", py_list)); /* adding the row */
     }
     
     /*freeing A*/
@@ -96,14 +96,14 @@ static PyObject *ddg(PyObject *self, PyObject *args) {
     d = PyObject_Length(PyList_GetItem(py_X, 0));
     
     /*allocating spcae*/
-    X = (**double)malloc(sizeof(*double)*n);
+    X = (double**)malloc(sizeof(double*)*n);
     if(X == NULL){
         printf("An Error Has Occurred\n");
         exit(1);
     }
     for (i = 0; i < n; i++)
     {
-        X[i] = (*double)malloc(sizeof(double)*k);
+        X[i] = (double*)malloc(sizeof(double)*d);
         if(X[i]==NULL){
             printf("An Error Has Occurred\n");
             exit(1);
@@ -113,31 +113,31 @@ static PyObject *ddg(PyObject *self, PyObject *args) {
     for (i = 0; i < n; i++) {
         py_list = PyList_GetItem(py_X, i); /* get the row */
         /* save element in matrix */
-        for (j = 0; j < k; j++) {
+        for (j = 0; j < d; j++) {
             py_tmp = PyList_GetItem(py_list, j);
             X[i][j] = PyFloat_AsDouble(py_tmp);
         }
     }
 
-    D = ddg(X,n,k);
+    D = ddgg(X,n,d);
     /*freeing X*/
     for(i=0;i<n;i++){
         free(X[i]);
     }
     free(X);
-    py_D = Pypy_list_New(n);
+    py_D = PyList_New(n);
     for (i = 0; i < n; i++)
     {
-        py_list = Pypy_list_New(n); /* create a row */
+        py_list = PyList_New(n); /* create a row */
         if (py_list == NULL){
        	    printf("An Error Has Occurred\n");
             exit(1);
         }
         for (j = 0; j < n; j++)/*copying the row*/
         {
-            Pypy_list_SetItem(py_list, j, Py_BuildValue("d", D[i][j]));
+            PyList_SetItem(py_list, j, Py_BuildValue("d", D[i][j]));
         }
-        Pypy_list_SetItem(py_D, i, Py_BuildValue("O", py_list)); /* adding the row */
+        PyList_SetItem(py_D, i, Py_BuildValue("O", py_list)); /* adding the row */
     }
     /*freeing D*/
     for(i=0;i<n;i++){
@@ -165,14 +165,14 @@ static PyObject *norm(PyObject *self, PyObject *args) {
     d = PyObject_Length(PyList_GetItem(py_X, 0));
     
     /*allocating spcae*/
-    X = (**double)malloc(sizeof(*double)*n);
+    X = (double**)malloc(sizeof(double*)*n);
     if(X == NULL){
         printf("An Error Has Occurred\n");
         exit(1);
     }
     for (i = 0; i < n; i++)
     {
-        X[i] = (*double)malloc(sizeof(double)*k);
+        X[i] = (double*)malloc(sizeof(double)*d);
         if(X[i]==NULL){
             printf("An Error Has Occurred\n");
             exit(1);
@@ -182,31 +182,31 @@ static PyObject *norm(PyObject *self, PyObject *args) {
     for (i = 0; i < n; i++) {
         py_list = PyList_GetItem(py_X, i); /* get the row */
         /* save element in matrix */
-        for (j = 0; j < k; j++) {
+        for (j = 0; j < d; j++) {
             py_tmp = PyList_GetItem(py_list, j);
             X[i][j] = PyFloat_AsDouble(py_tmp);
         }
     }
 
-    W = norm(X,n,d);
+    W = normg(X,n,d);
     /*freeing X*/
     for(i=0;i<n;i++){
         free(X[i]);
     }
     free(X);
-    py_W = Pypy_list_New(n);
+    py_W = PyList_New(n);
     for (i = 0; i < n; i++)
     {
-        py_list = Pypy_list_New(n); /* create a row */
+        py_list = PyList_New(n); /* create a row */
         if (py_list == NULL){
        	    printf("An Error Has Occurred\n");
             exit(1);
         }
         for (j = 0; j < n; j++)/*copying the row*/
         {
-            Pypy_list_SetItem(py_list, j, Py_BuildValue("d", W[i][j]));
+            PyList_SetItem(py_list, j, Py_BuildValue("d", W[i][j]));
         }
-        Pypy_list_SetItem(py_W, i, Py_BuildValue("O", py_list)); /* adding the row */
+        PyList_SetItem(py_W, i, Py_BuildValue("O", py_list)); /* adding the row */
     }
     /*freeing W*/
     for(i=0;i<n;i++){
@@ -217,7 +217,7 @@ static PyObject *norm(PyObject *self, PyObject *args) {
 }
 
 static PyObject *symnmf(PyObject *self, PyObject *args) {
-    PyObject *py_W,py_IH,*py_list,*py_NH,*py_tmp;
+    PyObject *py_W,*py_IH,*py_list,*py_NH,*py_tmp;
     int i,j,n,k;
     double **W,**IH,**NH;/*IH stands for init H,NH stands for new H*/
     /* check if we managed to pass them well*/
@@ -231,35 +231,33 @@ static PyObject *symnmf(PyObject *self, PyObject *args) {
     }
     /*getting n*/
     n = PyObject_Length(py_W);
-
     /*allocating space for W,IH*/
-    W = (**double)malloc(sizeof(*double)*n);
+    W = (double**)malloc(sizeof(double*)*n);
     if(W== NULL){
         printf("An Error Has Occurred\n");
         exit(1);
     }
     for (i = 0; i < n; i++)
     {
-        W[i] = (*double)malloc(sizeof(double)*n);
+        W[i] = (double*)malloc(sizeof(double)*n);
         if(W[i]== NULL){
             printf("An Error Has Occurred\n");
             exit(1);
         }
     }
-    IH = (**double)malloc(sizeof(*double)*n);
+    IH = (double**)malloc(sizeof(double*)*n);
     if(IH== NULL){
         printf("An Error Has Occurred\n");
         exit(1);
     }
     for (i = 0; i < n; i++)
     {
-        IH[i] = (*double)malloc(sizeof(double)*k);
+        IH[i] = (double*)malloc(sizeof(double)*k);
         if(IH[i]== NULL){
             printf("An Error Has Occurred\n");
             exit(1);
         }
     }
-    
 
     for (i = 0; i < n; i++) {
         py_list = PyList_GetItem(py_W, i); /* get the row */
@@ -278,32 +276,33 @@ static PyObject *symnmf(PyObject *self, PyObject *args) {
         }
     }
 
-    NH = symnmf(W,IH,n,k);
+    NH = symnmfg(W,IH,n,k);
+
     /*freeing space of W,IH*/
     for(i=0;i<n;i++){
         free(W[i]);
     }
     free(W);
-
     for(i=0;i<n;i++){
         free(IH[i]);
     }
     free(IH);
 
-    py_NH = Pypy_list_New(n);
+    py_NH = PyList_New(n);
     for (i = 0; i < n; i++)
     {
-        py_list = Pypy_list_New(k); /* create a row */
+        py_list = PyList_New(k); /* create a row */
         if (py_list == NULL){
        	    printf("An Error Has Occurred\n");
             exit(1);
         }
         for (j = 0; j < k; j++)/*copying the row*/
         {
-            Pypy_list_SetItem(py_list, j, Py_BuildValue("d", W[i][j]));
+            PyList_SetItem(py_list, j, Py_BuildValue("d", W[i][j]));
         }
-        Pypy_list_SetItem(py_NH, i, Py_BuildValue("O", py_list)); /* adding the row */
+        PyList_SetItem(py_NH, i, Py_BuildValue("O", py_list)); /* adding the row */
     }
+
     /*freeing space of NH*/
     for(i=0;i<n;i++){
         free(NH[i]);
