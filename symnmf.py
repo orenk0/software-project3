@@ -12,15 +12,15 @@ X = pd.read_csv(filename, header=None)
 def lran(x,m,k):
     return np.random.uniform(0,2*math.sqrt(m/k))
 rfunc = np.vectorize(lran)
-X = X.values.tolist()
+X = X.values.tolist()#converting to list
 goal = sys.argv[2]
 if(goal == "symnmf"):#in case of goal == "symnmf"
     W = ms.norm(X)#calculating norm
     k = int(sys.argv[1])
-    m = np.average(np.array(W))
-    H = np.zeros((len(W),k))
-    H = rfunc(H,m,k)
-    H = H.tolist()#calculating the init H
+    m = np.average(np.array(W))#calculating W avg
+    H = np.zeros((len(W),k))#building the frame of H
+    H = rfunc(H,m,k)#init each element of H
+    H = H.tolist()#converting to list
     M = ms.symnmf(W,H,k)
 if(goal=="sym"):#in case of goal == "sym"
     M = ms.sym(X)
