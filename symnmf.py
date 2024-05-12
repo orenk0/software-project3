@@ -14,21 +14,21 @@ def lran(x,m,k):
 rfunc = np.vectorize(lran)
 X = X.values.tolist()
 goal = sys.argv[2]
-if(goal == "symnmf"):
-    W = ms.norm(X)
+if(goal == "symnmf"):#in case of goal == "symnmf"
+    W = ms.norm(X)#calculating norm
     k = int(sys.argv[1])
     m = np.average(np.array(W))
     H = np.zeros((len(W),k))
     H = rfunc(H,m,k)
-    H = H.tolist()
+    H = H.tolist()#calculating the init H
     M = ms.symnmf(W,H,k)
-if(goal=="sym"):
+if(goal=="sym"):#in case of goal == "sym"
     M = ms.sym(X)
-if(goal=="ddg"):
+if(goal=="ddg"):#in case of goal == "ddg"
     M = ms.ddg(X)
-if(goal=="norm"):
+if(goal=="norm"):#in case of goal == "norm"
     M = ms.norm(X)
-for i in range(len(M)):
+for i in range(len(M)):#printing the final matrix
         for j in range(len(M[i])-1):
             print('{:.4f}'.format(M[i][j]),end=",")
         print('{:.4f}'.format(M[i][len(M[i])-1]))
