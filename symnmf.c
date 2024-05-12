@@ -68,7 +68,6 @@ double **sym(FILE *file) {
             }
         }
     }
-    print_matrix(similarity_matrix, n, n);
     return similarity_matrix;
 }
 
@@ -87,7 +86,6 @@ double **ddg(FILE *file) {
         }
         degree_matrix[i][i] = degree;
     }
-    print_matrix(degree_matrix, n, n);
     return degree_matrix;
 }
 
@@ -103,8 +101,41 @@ double **norm(FILE *file) {
             normalized_similarity_matrix[i][j] = similarity_matrix[i][j] / (sqrt(degree_matrix[i][i]) * sqrt(degree_matrix[j][j]));//equivalent to the product.
         }
     }
-    print_matrix(normalized_similarity_matrix, n, n);
     return normalized_similarity_matrix;
+}
+
+
+double calculate_average(double **W) {
+    double sum = 0.0;
+    int total_elements = n*n;
+
+    // Traverse through each element of the 2D array
+    for (int i = 0; i < n; i++) {
+        for (int j = 0; j < n; j++) {
+            sum += W[i][j];
+        }
+    }
+
+    // Calculate the average
+    double average = sum / total_elements;
+
+    return average;
+}
+
+double **H(FILE *file, int k){
+    double **W = norm(file);
+    double m = calculate_average(W);
+    double max_value = 2.0 * sqrt(m / k);
+    double **H = (double **)malloc(n * sizeof(double *));
+    // Generate and print a random real number between 0 and max_value:
+    for(int i = 0 ; i < n ; i++){ 
+        H[i] = (double *)malloc(k * sizeof(double));
+        for(int j = 0 ; j < k ; j++){
+            H[i][j] = ((double)rand() / RAND_MAX) * max_value;
+        }
+    }
+    
+
 }
 
 
@@ -122,16 +153,19 @@ int main(int argc, char *argv[]) {
         return 1;
     }
 
+    double **mat;
+
     if (strcmp(goal, "sym") == 0) {
-        sym(file);
+        mat = sym(file);
     } else if (strcmp(goal, "ddg") == 0) {
-        ddg(file);
+        mat = ddg(file);
     } else if (strcmp(goal, "norm") == 0) {
-        norm(file);
+        mat = norm(file);
     } else {
         printf("An Error Has Occurred\n");//printf("Error: Invalid goal.\n");
         return 1;
     }
+    print_matrix(mat, n, n);
 
     fclose(file);
     return 0;
