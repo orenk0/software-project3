@@ -123,17 +123,61 @@ double calculate_average(double **W) {
 }
 
 double **H(FILE *file, int k){
+    //1.4.1
     double **W = norm(file);
     double m = calculate_average(W);
     double max_value = 2.0 * sqrt(m / k);
     double **H = (double **)malloc(n * sizeof(double *));
+    double **H_old = (double **)malloc(n * sizeof(double *));
     // Generate and print a random real number between 0 and max_value:
     for(int i = 0 ; i < n ; i++){ 
         H[i] = (double *)malloc(k * sizeof(double));
+        H_old[i] = (double *)malloc(k * sizeof(double));
         for(int j = 0 ; j < k ; j++){
+            H_old[i][j] = ((double)rand() / RAND_MAX) * max_value;
             H[i][j] = ((double)rand() / RAND_MAX) * max_value;
         }
     }
+    //1.4.2
+    double beta = 0.5;
+    int iter = 0;
+    int max_iter = 300;
+    double eps = 0.0001;
+    double criteria = 0;
+    do{
+        //calc new H
+        for(int i = 0 ; i < n ; i++){
+            for(int j = 0 ; j < k ; j++){
+                //calculate the ith jth entrance of the numerator:
+                double x1 = 0;
+                for(int a = 0 ; a < n ; a++){
+                    x1+=W[i][a]*H_old[a][j];
+                }
+                //calculate the ith jth entrance of the denominator:
+                double x2 = 0;
+                for(int a = 0 ; a < n ; a++){
+                    double x3 = 0;
+                    for(int b = 0 ; b < k ; b++){
+                        x3+=H_old[i][b]*H_old[a][b];
+                    }
+                    x1+=x3*H_old[a][j];
+                }
+
+                int temp = H_old[i][j];
+                H_old[i][j] = H[i][j];
+                
+                H[i][j] = temp * (1-beta+beta*(x1/x2));
+            }
+        }
+        iter++;
+        //check the change isnt small
+        criteria = 0;
+        for(int i = 0 ; i < n ; i++){
+            for(int j = 0 ; j < k ; j++){
+                criteria += (H[i][j]-H_old[i][j])*(H[i][j]-H_old[i][j]);
+            }
+        }
+    }while(iter < max_iter && criteria > eps);
     
 
 }
