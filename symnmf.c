@@ -19,7 +19,7 @@ double squared_euclidean_distance(double *x1, double *x2, int d) {
 /* Function to print a general matrix */
 void print_matrix(double **matrix, int rows, int cols) {
     /* Defining variables for future use: */
-    int i;
+    int i,j;
     int k;
     for (i = 0; i < rows; i++) { /* Loop through rows */
         for (j = 0; j < cols; j++) { /* Loop through columns */
@@ -76,17 +76,25 @@ double **scan_points(FILE *file) {
     return points; /* Return the array of points */
 }
 
-
+/*outer func*/
+double **symc(FILE *file){
+    /* Obtain points from file */
+    double **points;
+    points = scan_points(file);
+    return sym(points,n,d);
+}
+/*inner func*/
 /* Function to calculate similarity matrix */
-double **sym(FILE *file) {
+double **sym(double** X,int ni,int di) {
     /* Defining variables for future use: */
     int i;
     int j;
     double **points;
     double **similarity_matrix;
     double dist;
-    /* Obtain points from file */
-    points = scan_points(file);
+    n=ni;
+    d=di;
+    points = X;
     /* Allocate memory for similarity matrix */
     similarity_matrix = (double **)malloc(n * sizeof(double *));
     for (i = 0; i < n; i++) {
@@ -104,22 +112,27 @@ double **sym(FILE *file) {
     return similarity_matrix; /* Return the similarity matrix */
 }
 
-
-
-
-
+/*outer func*/
+double **ddgc(FILE *file){
+    /* Obtain points from file */
+    double **points;
+    points = scan_points(file);
+    return ddg(points,n,d);
+}
+/*inner func*/
 /* Function to calculate Diagonal Degree Matrix */
-double **ddg(FILE *file) {
+double **ddg(double** X,int ni,int di){
     /* Defining variables for future use: */
     int i;
     int j;
     double degree;
     double **degree_matrix;
     double **similarity_matrix;
+
+    /* Obtain similarity matrix */
+    similarity_matrix = sym(X,n,d);
     /* Allocate memory for degree matrix */
     degree_matrix = (double **)malloc(n * sizeof(double *));
-    /* Obtain similarity matrix */
-    similarity_matrix = sym(file);
     for (i = 0; i < n; i++) {
         degree_matrix[i] = (double *)malloc(n * sizeof(double));
         degree = 0.0; /* Initialize degree for each node */
@@ -132,9 +145,16 @@ double **ddg(FILE *file) {
 }
 
 
-
+/*outer func*/
+double **normc(FILE *file){
+    /* Obtain points from file */
+    double **points;
+    points = scan_points(file);
+    return norm(points,n,d);
+}
+/*inner func*/
 /* Function to calculate normalized similarity matrix */
-double **norm(FILE *file) {
+double **norm(double** X,int ni,int di) {
     /* Defining variables for future use: */
     double **similarity_matrix;
     double **degree_matrix;
@@ -142,10 +162,9 @@ double **norm(FILE *file) {
     int i;
     int j;
     /* Obtain similarity matrix */
-    similarity_matrix = sym(file);
-    rewind(file); /* Reset file pointer */
+    similarity_matrix = sym(X,ni,di);
     /* Obtain degree matrix */
-    degree_matrix = ddg(file);
+    degree_matrix = ddg(X,n,d);
     /* Allocate memory for normalized similarity matrix */
     normalized_similarity_matrix = (double **)malloc(n * sizeof(double *));
     for (i = 0; i < n; i++) {
@@ -180,12 +199,9 @@ double calculate_average(double **W) {
 
 
 /* Function to perform symmetric NMF */
-double **symnmf(FILE *file, int k){
+double** symnmf(double** W,double** H,int n,int k){
     /* 1.4.1: Initialization */
-    double **W = norm(file); /* Calculate normalized similarity matrix */
     double m = calculate_average(W); /* Calculate average value of W */
-    double max_value = 2.0 * sqrt(m / k); /* Calculate maximum value for initialization */
-    double **H = (double **)malloc(n * sizeof(double *));
     double **H_old = (double **)malloc(n * sizeof(double *));
     double **H_tmp = (double **)malloc(n * sizeof(double *));
     /* Defining variables for future use: */
@@ -204,13 +220,11 @@ double **symnmf(FILE *file, int k){
     
     /* Initialize H with random values */
     for(int i = 0 ; i < n ; i++){ 
-        H[i] = (double *)malloc(k * sizeof(double));
         H_old[i] = (double *)malloc(k * sizeof(double));
         H_tmp[i] = (double *)malloc(k * sizeof(double));
         for(int j = 0 ; j < k ; j++){
-            H_old[i][j] = ((double)rand() / RAND_MAX) * max_value;
-            H_tmp[i][j] = ((double)rand() / RAND_MAX) * max_value;
-            H[i][j] = ((double)rand() / RAND_MAX) * max_value;
+            H_old[i][j] = H[i][j];
+            H_tmp[i][j] = H_tmp[i][j];
         }
     }
     
@@ -284,18 +298,16 @@ int main(int argc, char *argv[]) {
 
 
     if (strcmp(goal, "sym") == 0) {
-        mat = sym(file); /* Calculate similarity matrix */
+        mat = symc(file); /* Calculate similarity matrix */
     } else if (strcmp(goal, "ddg") == 0) {
-        mat = ddg(file); /* Calculate degree matrix */
+        mat = ddgc(file); /* Calculate degree matrix */
     } else if (strcmp(goal, "norm") == 0) {
-        mat = norm(file); /* Calculate normalized similarity matrix */
+        mat = normc(file); /* Calculate normalized similarity matrix */
     } else {
         printf("An Error Has Occurred\n"); /* Print error message */
         return 1; /* Exit with error code */
     }
     print_matrix(mat, n, n); /* Print the matrix */
-    rewind(file); /* Reset file pointer */
-    print_matrix(symnmf(file,2),n,2); /* Print symmetric NMF result */
 
     fclose(file); /* Close file */
     return 0; /* Exit with success */
