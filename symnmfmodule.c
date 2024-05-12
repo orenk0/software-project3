@@ -277,7 +277,6 @@ static PyObject *symnmf(PyObject *self, PyObject *args) {
     }
 
     NH = symnmfg(W,IH,n,k);
-
     /*freeing space of W,IH*/
     for(i=0;i<n;i++){
         free(W[i]);
@@ -298,7 +297,7 @@ static PyObject *symnmf(PyObject *self, PyObject *args) {
         }
         for (j = 0; j < k; j++)/*copying the row*/
         {
-            PyList_SetItem(py_list, j, Py_BuildValue("d", W[i][j]));
+            PyList_SetItem(py_list, j, Py_BuildValue("d", NH[i][j]));
         }
         PyList_SetItem(py_NH, i, Py_BuildValue("O", py_list)); /* adding the row */
     }

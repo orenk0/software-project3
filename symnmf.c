@@ -35,13 +35,14 @@ void print_matrix(double **matrix, int rows, int cols) {
 
 /* Function to scan points from file and store them in a 2D array */
 double **scan_points(FILE *file) {
-    n = 0; /* Initialize number of points */
-    d = 0; /* Initialize number of dimensions */
     /* Defining variables for future use: */
     int i; /* Declare loop variable */
     int j; /* Declare loop variable */
     double temp; /* Temporary variable to store scanned values */
     double **points;
+    
+    n = 0; /* Initialize number of points */
+    d = 0; /* Initialize number of dimensions */
     
     /* Count dimensions and points */
     while (fscanf(file, "%lf", &temp) == 1) {
@@ -123,7 +124,7 @@ double **ddgg(double** X,int ni,int di){
     double **similarity_matrix;
 
     /* Obtain similarity matrix */
-    similarity_matrix = symg(X,n,d);
+    similarity_matrix = symg(X,ni,di);
     /* Allocate memory for degree matrix */
     degree_matrix = (double **)malloc(n * sizeof(double *));
     for (i = 0; i < n; i++) {
@@ -156,7 +157,7 @@ double **normg(double** X,int ni,int di) {
     /* Obtain similarity matrix */
     similarity_matrix = symg(X,ni,di);
     /* Obtain degree matrix */
-    degree_matrix = ddgg(X,n,d);
+    degree_matrix = ddgg(X,ni,di);
     /* Allocate memory for normalized similarity matrix */
     normalized_similarity_matrix = (double **)malloc(n * sizeof(double *));
     for (i = 0; i < n; i++) {
@@ -199,11 +200,11 @@ double** symnmfg(double** W,double** IH,int n,int k){
     H_tmp = (double **)malloc(n * sizeof(double *));
     H = (double **)malloc(n * sizeof(double *));
     /* Initialize H with random values */
-    for(int i = 0 ; i < n ; i++){ 
+    for(i = 0 ; i < n ; i++){ 
         H_old[i] = (double *)malloc(k * sizeof(double));
         H_tmp[i] = (double *)malloc(k * sizeof(double));
         H[i] = (double *)malloc(k * sizeof(double));
-        for(int j = 0 ; j < k ; j++){
+        for(j = 0 ; j < k ; j++){
             H_old[i][j] = IH[i][j];
             H_tmp[i][j] = IH[i][j];
             H[i][j] = IH[i][j];
