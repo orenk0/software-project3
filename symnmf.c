@@ -40,7 +40,6 @@ double **scan_points(FILE *file) {
     }
     
     d = d / n;
-    printf("%d\n",d);
     rewind(file);
     double **points = (double **)malloc(n * sizeof(double *));
     for (int i = 0; i < n; i++) {
@@ -60,7 +59,6 @@ double **sym(FILE *file) {
         similarity_matrix[i] = (double *)malloc(n * sizeof(double));
         for (int j = 0; j < n; j++) {
             double dist = squared_euclidean_distance(points[i], points[j], d);
-            printf("%lf\n", dist);
             if (i != j) {
                 similarity_matrix[i][j] = exp(-dist / 2);
             } else {
@@ -93,6 +91,7 @@ double **ddg(FILE *file) {
 // Function to calculate normalized similarity matrix
 double **norm(FILE *file) {
     double **similarity_matrix = sym(file);
+    rewind(file);
     double **degree_matrix = ddg(file);
     double **normalized_similarity_matrix = (double **)malloc(n * sizeof(double *));
     for (int i = 0; i < n; i++) {
@@ -122,20 +121,24 @@ double calculate_average(double **W) {
     return average;
 }
 
-double **H(FILE *file, int k){
+double **symnmf(FILE *file, int k){
     //1.4.1
     double **W = norm(file);
     double m = calculate_average(W);
     double max_value = 2.0 * sqrt(m / k);
     double **H = (double **)malloc(n * sizeof(double *));
     double **H_old = (double **)malloc(n * sizeof(double *));
+    double **H_tmp = (double **)malloc(n * sizeof(double *));
     // Generate and print a random real number between 0 and max_value:
     for(int i = 0 ; i < n ; i++){ 
         H[i] = (double *)malloc(k * sizeof(double));
         H_old[i] = (double *)malloc(k * sizeof(double));
+        H_tmp[i] = (double *)malloc(k * sizeof(double));
         for(int j = 0 ; j < k ; j++){
             H_old[i][j] = ((double)rand() / RAND_MAX) * max_value;
+            H_tmp[i][j] = ((double)rand() / RAND_MAX) * max_value;
             H[i][j] = ((double)rand() / RAND_MAX) * max_value;
+            //printf("%lf",H[i][j]);
         }
     }
     //1.4.2
@@ -145,28 +148,37 @@ double **H(FILE *file, int k){
     double eps = 0.0001;
     double criteria = 0;
     do{
+        //print_matrix(H,n,k);
+        //printf("\n\n");
         //calc new H
         for(int i = 0 ; i < n ; i++){
             for(int j = 0 ; j < k ; j++){
                 //calculate the ith jth entrance of the numerator:
                 double x1 = 0;
                 for(int a = 0 ; a < n ; a++){
-                    x1+=W[i][a]*H_old[a][j];
+                    x1+=W[i][a]*H[a][j];
                 }
+                //printf("x1 = %lf\n",x1);
+                //print_matrix(H,n,k);
                 //calculate the ith jth entrance of the denominator:
                 double x2 = 0;
                 for(int a = 0 ; a < n ; a++){
                     double x3 = 0;
                     for(int b = 0 ; b < k ; b++){
-                        x3+=H_old[i][b]*H_old[a][b];
+                        x3+=H[i][b]*H[a][b];
                     }
-                    x1+=x3*H_old[a][j];
+                    x2+=x3*H[a][j];
                 }
 
-                int temp = H_old[i][j];
                 H_old[i][j] = H[i][j];
                 
-                H[i][j] = temp * (1-beta+beta*(x1/x2));
+                H_tmp[i][j] = H[i][j] * (1-beta+beta*(x1/x2));
+                //printf("%lf", H[0][0]);
+            }
+        }
+        for(int i = 0 ; i < n ; i++){
+            for(int j = 0 ; j < k ; j++){
+                H[i][j] = H_tmp[i][j];
             }
         }
         iter++;
@@ -175,11 +187,12 @@ double **H(FILE *file, int k){
         for(int i = 0 ; i < n ; i++){
             for(int j = 0 ; j < k ; j++){
                 criteria += (H[i][j]-H_old[i][j])*(H[i][j]-H_old[i][j]);
+                //printf("%lf\n",H[i][j]-H_old[i][j]);
             }
         }
     }while(iter < max_iter && criteria > eps);
-    
-
+    //printf("%lf", H[0][0]);
+    return H;
 }
 
 
@@ -210,6 +223,9 @@ int main(int argc, char *argv[]) {
         return 1;
     }
     print_matrix(mat, n, n);
+    rewind(file);
+    printf("\n\n");
+    print_matrix(symnmf(file,2),n,2);
 
     fclose(file);
     return 0;
