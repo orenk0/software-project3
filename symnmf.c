@@ -54,9 +54,18 @@ double **scan_points(FILE *file) {
     d = d / n; /* Calculate actual dimension */
     
     /* Allocate memory for points array */
-    points = (double **)malloc(n * sizeof(double *));
-    for (i = 0; i < n; i++) {
-        points[i] = (double *)malloc(d * sizeof(double));
+    points = (double**)malloc(sizeof(double*)*n);
+    if(points == NULL){
+        printf("An Error Has Occurred\n");
+        exit(1);
+    }
+    for (i = 0; i < n; i++)
+    {
+        points[i] = (double*)malloc(sizeof(double)*d);
+        if(points[i]==NULL){
+            printf("An Error Has Occurred\n");
+            exit(1);
+        }
     }
     
     /* Reset file pointer */
@@ -89,9 +98,17 @@ double **symg(double** X,int ni,int di) {
     d=di;
     points = X;
     /* Allocate memory for similarity matrix */
-    similarity_matrix = (double **)malloc(n * sizeof(double *));
+    similarity_matrix = (double**)malloc(sizeof(double*)*n);
+    if(similarity_matrix == NULL){
+        printf("An Error Has Occurred\n");
+        exit(1);
+    }
     for (i = 0; i < n; i++) {
         similarity_matrix[i] = (double *)malloc(n * sizeof(double));
+        if(similarity_matrix[i]==NULL){
+            printf("An Error Has Occurred\n");
+            exit(1);
+        }
         for (j = 0; j < n; j++) {
             /* Calculate squared Euclidean distance */
             dist = squared_euclidean_distance(points[i], points[j], d);
@@ -108,9 +125,15 @@ double **symg(double** X,int ni,int di) {
 /*outer func*/
 double **symc(FILE *file){
     /* Obtain points from file */
-    double **points;
+    double **points,**mat;
     points = scan_points(file);
-    return symg(points,n,d);
+    mat= symg(points,n,d);
+    /*freeing points*/
+    for(i=0;i<n;i++){
+        free(points[i]);
+    }
+    free(points);
+    return mat;
 }
 
 /*inner func*/
@@ -127,23 +150,42 @@ double **ddgg(double** X,int ni,int di){
     similarity_matrix = symg(X,ni,di);
     /* Allocate memory for degree matrix */
     degree_matrix = (double **)malloc(n * sizeof(double *));
+    if(degree_matrix == NULL){
+        printf("An Error Has Occurred\n");
+        exit(1);
+    }
     for (i = 0; i < n; i++) {
         degree_matrix[i] = (double *)malloc(n * sizeof(double));
+        if(degree_matrix[i] == NULL){
+            printf("An Error Has Occurred\n");
+            exit(1);
+        }
         degree = 0.0; /* Initialize degree for each node */
         for (j = 0; j < n; j++) {
             degree += similarity_matrix[i][j]; /* Accumulate similarity */
         }
         degree_matrix[i][i] = degree; /* Assign degree to diagonal element */
     }
+    /*freeing similarity_matrix*/
+    for(i=0;i<n;i++){
+        free(similarity_matrix[i]);
+    }
+    free(similarity_matrix);
     return degree_matrix; /* Return the degree matrix */
 }
 
 /*outer func*/
 double **ddgc(FILE *file){
     /* Obtain points from file */
-    double **points;
+    double **points,**mat;
     points = scan_points(file);
-    return ddgg(points,n,d);
+    mat= ddgg(points,n,d);
+    /*freeing points*/
+    for(i=0;i<n;i++){
+        free(points[i]);
+    }
+    free(points);
+    return mat;
 }
 /*inner func*/
 /* Function to calculate normalized similarity matrix */
@@ -160,21 +202,45 @@ double **normg(double** X,int ni,int di) {
     degree_matrix = ddgg(X,ni,di);
     /* Allocate memory for normalized similarity matrix */
     normalized_similarity_matrix = (double **)malloc(n * sizeof(double *));
+    if(normalized_similarity_matrix == NULL){
+        printf("An Error Has Occurred\n");
+        exit(1);
+    }
     for (i = 0; i < n; i++) {
         normalized_similarity_matrix[i] = (double *)malloc(n * sizeof(double));
+        if(normalized_similarity_matrix[i] == NULL){
+            printf("An Error Has Occurred\n");
+            exit(1);
+        }
         for (j = 0; j < n; j++) {
             /* Calculate normalized similarity */
             normalized_similarity_matrix[i][j] = similarity_matrix[i][j] / (sqrt(degree_matrix[i][i]) * sqrt(degree_matrix[j][j]));
         }
     }
+    /*freeing similarity_matrix*/
+    for(i=0;i<n;i++){
+        free(similarity_matrix[i]);
+    }
+    free(similarity_matrix);
+    /*freeing degree_matrix*/
+    for(i=0;i<n;i++){
+        free(degree_matrix[i]);
+    }
+    free(degree_matrix);
     return normalized_similarity_matrix; /* Return the normalized similarity matrix */
 }
 /*outer func*/
 double **normc(FILE *file){
     /* Obtain points from file */
-    double **points;
+    double **points,**mat;
     points = scan_points(file);
-    return normg(points,n,d);
+    mat= normg(points,n,d);
+    /*freeing points*/
+    for(i=0;i<n;i++){
+        free(points[i]);
+    }
+    free(points);
+    return mat;
 }
 
 /* Function to perform symmetric NMF */
@@ -199,11 +265,19 @@ double** symnmfg(double** W,double** IH,int n,int k){
     H_old = (double **)malloc(n * sizeof(double *));
     H_tmp = (double **)malloc(n * sizeof(double *));
     H = (double **)malloc(n * sizeof(double *));
+    if((H_old == NULL)||(H_tmp == NULL)||(H == NULL)){
+        printf("An Error Has Occurred\n");
+        exit(1);
+    }
     /* Initialize H with random values */
     for(i = 0 ; i < n ; i++){ 
         H_old[i] = (double *)malloc(k * sizeof(double));
         H_tmp[i] = (double *)malloc(k * sizeof(double));
         H[i] = (double *)malloc(k * sizeof(double));
+        if((H_old[i] == NULL)||(H_tmp[i] == NULL)||(H[i] == NULL)){
+            printf("An Error Has Occurred\n");
+            exit(1);
+        }
         for(j = 0 ; j < k ; j++){
             H_old[i][j] = IH[i][j];
             H_tmp[i][j] = IH[i][j];
@@ -255,6 +329,7 @@ double** symnmfg(double** W,double** IH,int n,int k){
             }
         }
     }while(iter < max_iter && criteria > eps);
+    /*freeing H_old,H_tmp*/
     for(i=0;i<n;i++){
         free(H_old[i]);
     }
@@ -299,6 +374,7 @@ int main(int argc, char *argv[]) {
         return 1; /* Exit with error code */
     }
     print_matrix(mat, n, n); /* Print the matrix */
+    /*freeing mat*/
     for(i=0;i<n;i++){
         free(mat[i]);
     }
