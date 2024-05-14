@@ -126,6 +126,7 @@ double **symg(double** X,int ni,int di) {
 double **symc(FILE *file){
     /* Obtain points from file */
     double **points,**mat;
+    int i;
     points = scan_points(file);
     mat= symg(points,n,d);
     /*freeing points*/
@@ -178,6 +179,7 @@ double **ddgg(double** X,int ni,int di){
 double **ddgc(FILE *file){
     /* Obtain points from file */
     double **points,**mat;
+    int i;
     points = scan_points(file);
     mat= ddgg(points,n,d);
     /*freeing points*/
@@ -233,6 +235,7 @@ double **normg(double** X,int ni,int di) {
 double **normc(FILE *file){
     /* Obtain points from file */
     double **points,**mat;
+    int i;
     points = scan_points(file);
     mat= normg(points,n,d);
     /*freeing points*/
