@@ -40,7 +40,9 @@ double **scan_points(FILE *file) {
     int j; /* Declare loop variable */
     double temp; /* Temporary variable to store scanned values */
     double **points;
-    
+    boolean drop; /* Temporary variable to store whether we drop in the prev line or not*/
+
+    drop = false;
     n = 0; /* Initialize number of points */
     d = 0; /* Initialize number of dimensions */
     
@@ -48,6 +50,13 @@ double **scan_points(FILE *file) {
     while (fscanf(file, "%lf", &temp) == 1) {
         d += 1; /* Increment dimension count */
         if (fgetc(file) == '\n') {
+            n += 1; /* Increment point count */
+            drop = true;
+        }
+        else{
+            drop = false;
+        }
+        if (fgetc(file) == -1&&!drop) {
             n += 1; /* Increment point count */
         }
     }
