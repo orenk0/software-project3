@@ -51,7 +51,6 @@ double **scan_points(FILE *file) {
         read = fgetc(file);
         if (read == '\n'||read == -1) {
             n += 1; /* Increment point count */
-            printf("1");
         }
     }
     d = d / n; /* Calculate actual dimension */
