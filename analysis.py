@@ -29,7 +29,7 @@ for i in range(len(M)):#printing the final matrix
         print('{:.4f}'.format(M[i][len(M[i])-1]))
 print("  ")
 clusters_nmf = np.argmax(M, axis=1)
-print('{:.4f}'.format(clusters_nmf))
+print(clusters_nmf)
 
 DB = km.get_data_points(filename)
 mu = km.k_means(k,300,DB)
