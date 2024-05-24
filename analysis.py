@@ -4,7 +4,6 @@ import numpy as np
 import pandas as pd
 import math
 from sklearn.metrics import silhouette_score
-import kmeans as km
 
 np.random.seed(0)
 #get the data
