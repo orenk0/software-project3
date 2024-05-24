@@ -25,8 +25,8 @@ M = ms.symnmf(W,H,k)
 clusters_nmf = np.argmax(M, axis=1)
 #print(clusters)
 
-DB = km.get_data_points(filename)
-mu = km.k_means(k,300,DB)
+DB = get_data_points(filename)
+mu = k_means(k,300,DB)
 mu = np.array([[float(val) for val in row] for row in mu])
 
 clusters_km = np.asarray([np.argmin(np.linalg.norm(mu - X[i], axis=1)) for i in range(len(X))])
