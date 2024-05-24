@@ -37,6 +37,5 @@ print("nmf:",silhouette_score(X,clusters_nmf))
 print("kmeans:",silhouette_score(X,clusters_km))
 
 
-
     
 
