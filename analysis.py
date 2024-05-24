@@ -23,7 +23,16 @@ H = rfunc(H,m,k)
 H = H.tolist()
 M = ms.symnmf(W,H,k)
 
+for i in range(len(M)):#printing the final matrix
+        for j in range(len(M[i])-1):
+            print('{:.4f}'.format(M[i][j]),end=",")
+        print('{:.4f}'.format(M[i][len(M[i])-1]))
+print("  ")
 clusters_nmf = np.argmax(M, axis=1)
+for i in range(len(clusters_nmf)):#printing the final matrix
+        for j in range(len(clusters_nmf[i])-1):
+            print('{:.4f}'.format(clusters_nmf[i][j]),end=",")
+        print('{:.4f}'.format(clusters_nmf[i][len(clusters_nmf[i])-1]))
 
 DB = km.get_data_points(filename)
 mu = km.k_means(k,300,DB)
