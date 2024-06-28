@@ -158,12 +158,12 @@ double **ddgg(double** X,int ni,int di){
         exit(1);
     }
     for (i = 0; i < n; i++) {
-        degree_matrix[i] = (double *)malloc(n * sizeof(double));
+        degree_matrix[i] = (double *)calloc(n,sizeof(double));
         if(degree_matrix[i] == NULL){
             printf("An Error Has Occurred\n");
             exit(1);
         }
-        degree = 0.0; /* Initialize degree for each node */
+        degree = 0; /* Initialize degree for each node */
         for (j = 0; j < n; j++) {
             degree += similarity_matrix[i][j]; /* Accumulate similarity */
         }

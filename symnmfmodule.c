@@ -78,6 +78,20 @@ static PyObject *sym(PyObject *self, PyObject *args) {
     return py_A;
 }
 
+void print_matrix(double **matrix, int rows, int cols) {
+    /* Defining variables for future use: */
+    int i,j;
+    for (i = 0; i < rows; i++) { /* Loop through rows */
+        for (j = 0; j < cols; j++) { /* Loop through columns */
+            printf("%.4f", matrix[i][j]); /* Print each element */
+            if (j != cols - 1) { /* If not the last column, print comma */
+                printf(",");
+            }
+        }
+        printf("\n"); /* Move to the next line after each row */
+    }
+}
+
 static PyObject *ddg(PyObject *self, PyObject *args) {
     PyObject *py_X,*py_list,*py_D,*py_tmp;
     int i,j,n,d;

@@ -25,6 +25,12 @@ if(goal == "symnmf"):#in case of goal == "symnmf"
 if(goal=="sym"):#in case of goal == "sym"
     M = ms.sym(X)
 if(goal=="ddg"):#in case of goal == "ddg"
+    M = ms.sym(X)
+    for i in range(len(M)):
+        for j in range(len(M)):
+             x = M[i][j]
+             M[i][j] = M[i][j]-x
+             M[i][i] += x
     M = ms.ddg(X)
 if(goal=="norm"):#in case of goal == "norm"
     M = ms.norm(X)
