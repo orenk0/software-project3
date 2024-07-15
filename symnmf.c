@@ -148,7 +148,6 @@ double **ddgg(double** X,int ni,int di){
     double degree;
     double **degree_matrix;
     double **similarity_matrix;
-
     /* Obtain similarity matrix */
     similarity_matrix = symg(X,ni,di);
     /* Allocate memory for degree matrix */

@@ -78,20 +78,6 @@ static PyObject *sym(PyObject *self, PyObject *args) {
     return py_A;
 }
 
-void print_matrix(double **matrix, int rows, int cols) {
-    /* Defining variables for future use: */
-    int i,j;
-    for (i = 0; i < rows; i++) { /* Loop through rows */
-        for (j = 0; j < cols; j++) { /* Loop through columns */
-            printf("%.4f", matrix[i][j]); /* Print each element */
-            if (j != cols - 1) { /* If not the last column, print comma */
-                printf(",");
-            }
-        }
-        printf("\n"); /* Move to the next line after each row */
-    }
-}
-
 static PyObject *ddg(PyObject *self, PyObject *args) {
     PyObject *py_X,*py_list,*py_D,*py_tmp;
     int i,j,n,d;
@@ -105,10 +91,9 @@ static PyObject *ddg(PyObject *self, PyObject *args) {
         printf("An Error Has Occurred\n");
         exit(1);
     }
-    /*getting n*/
+    
     n = PyObject_Length(py_X);
     d = PyObject_Length(PyList_GetItem(py_X, 0));
-    
     /*allocating spcae*/
     X = (double**)malloc(sizeof(double*)*n);
     if(X == NULL){
@@ -132,14 +117,20 @@ static PyObject *ddg(PyObject *self, PyObject *args) {
             X[i][j] = PyFloat_AsDouble(py_tmp);
         }
     }
-
-    D = ddgg(X,n,d);
+    /* get A from c code, and then n */
+    D= ddgg(X,n,d);
+    
     /*freeing X*/
     for(i=0;i<n;i++){
         free(X[i]);
     }
     free(X);
-    py_D = PyList_New(n);
+    
+    py_D = PyList_New(n); /* create a py_list */
+    if (py_D == NULL){
+        printf("An Error Has Occurred\n");
+        exit(1);
+    }
     for (i = 0; i < n; i++)
     {
         py_list = PyList_New(n); /* create a row */
@@ -153,7 +144,8 @@ static PyObject *ddg(PyObject *self, PyObject *args) {
         }
         PyList_SetItem(py_D, i, Py_BuildValue("O", py_list)); /* adding the row */
     }
-    /*freeing D*/
+    
+    /*freeing A*/
     for(i=0;i<n;i++){
         free(D[i]);
     }
