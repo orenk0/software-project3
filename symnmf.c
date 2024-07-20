@@ -3,6 +3,10 @@
 #include <string.h>
 #include <math.h>
 
+#define beta 0.5
+#define max_iter 300
+#define eps 0.0001
+
 /* Global variables for dimensions of the input: */
 int n, d;
 /* Function to calculate the squared Euclidean distance between two points */
@@ -247,57 +251,10 @@ double **normc(FILE *file){
     return mat;
 }
 
-/* Function to perform symmetric NMF */
-double** symnmfg(double** W,double** IH,int n,int k){
-    /* Defining variables for future use: */
-    double **H_old;
-    double **H_tmp;
-    double **H;
-    int i;
-    int j;
-    double beta;
-    int iter;
-    int max_iter;
-    double eps;
-    double criteria;
-    double x1;
-    double x2;
-    double x3;
-    int a;
-    int b;
-    /*init some var*/
-    H_old = (double **)malloc(n * sizeof(double *));
-    H_tmp = (double **)malloc(n * sizeof(double *));
-    H = (double **)malloc(n * sizeof(double *));
-    if((H_old == NULL)||(H_tmp == NULL)||(H == NULL)){
-        printf("An Error Has Occurred\n");
-        exit(1);
-    }
-    /* Initialize H with random values */
-    for(i = 0 ; i < n ; i++){ 
-        H_old[i] = (double *)malloc(k * sizeof(double));
-        H_tmp[i] = (double *)malloc(k * sizeof(double));
-        H[i] = (double *)malloc(k * sizeof(double));
-        if((H_old[i] == NULL)||(H_tmp[i] == NULL)||(H[i] == NULL)){
-            printf("An Error Has Occurred\n");
-            exit(1);
-        }
-        for(j = 0 ; j < k ; j++){
-            H_old[i][j] = IH[i][j];
-            H_tmp[i][j] = IH[i][j];
-            H[i][j] = IH[i][j];
-        }
-    }
-    
-    /* 1.4.2: Update H iteratively */
-    beta = 0.5;
-    iter = 0;
-    max_iter = 300;
-    eps = 0.0001;
-    criteria = 0;
-    do{
-        /* Update H */
-        for(i = 0 ; i < n ; i++){
+void UpdateH(double** H,double** H_old,double** H_tmp,double** W,int k,int n){
+    int i,j,a,b;
+    double x1,x2,x3;
+    for(i = 0 ; i < n ; i++){
             for(j = 0 ; j < k ; j++){
                 /* Calculate numerator */
                 x1 = 0;
@@ -324,6 +281,44 @@ double** symnmfg(double** W,double** IH,int n,int k){
                 H[i][j] = H_tmp[i][j];
             }
         }
+}
+
+/* Function to perform symmetric NMF */
+double** symnmfg(double** W,double** IH,int n,int k){
+    /* Defining variables for future use: */
+    double **H_old,**H_tmp,**H;
+    int i,j,iter;
+    double criteria;
+    /*init some var*/
+    H_old = (double **)malloc(n * sizeof(double *));
+    H_tmp = (double **)malloc(n * sizeof(double *));
+    H = (double **)malloc(n * sizeof(double *));
+    if((H_old == NULL)||(H_tmp == NULL)||(H == NULL)){
+        printf("An Error Has Occurred\n");
+        exit(1);
+    }
+    /* Initialize H with random values */
+    for(i = 0 ; i < n ; i++){ 
+        H_old[i] = (double *)malloc(k * sizeof(double));
+        H_tmp[i] = (double *)malloc(k * sizeof(double));
+        H[i] = (double *)malloc(k * sizeof(double));
+        if((H_old[i] == NULL)||(H_tmp[i] == NULL)||(H[i] == NULL)){
+            printf("An Error Has Occurred\n");
+            exit(1);
+        }
+        for(j = 0 ; j < k ; j++){
+            H_old[i][j] = IH[i][j];
+            H_tmp[i][j] = IH[i][j];
+            H[i][j] = IH[i][j];
+        }
+    }
+    
+    /* 1.4.2: Update H iteratively */
+    iter = 0;
+    criteria = 0;
+    do{
+        /* Update H */
+        UpdateH(H,H_old,H_tmp,W,k,n);
         iter++;
         /* Check convergence */
         criteria = 0;

@@ -32,8 +32,8 @@ mu = np.array([[float(val) for val in row] for row in mu])
 clusters_km = np.asarray([np.argmin(np.linalg.norm(mu - X[i], axis=1)) for i in range(len(X))])
 
 #print(clusters)
-print("nmf:",silhouette_score(X,clusters_nmf))
-print("kmeans:",silhouette_score(X,clusters_km))
+print("nmf:",'{:.4f}'.format(silhouette_score(X,clusters_nmf)))
+print("kmeans:",'{:.4f}'.format(silhouette_score(X,clusters_km)))
 
 
     
