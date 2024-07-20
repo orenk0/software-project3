@@ -386,4 +386,3 @@ int main(int argc, char *argv[]) {
     fclose(file); /* Close file */
     return 0; /* Exit with success */
 }
-
