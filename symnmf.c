@@ -251,6 +251,7 @@ double **normc(FILE *file){
     return mat;
 }
 
+/*method for updating H once according to the instruction*/
 void UpdateH(double** H,double** H_old,double** H_tmp,double** W,int k,int n){
     int i,j,a,b;
     double x1,x2,x3;
@@ -283,12 +284,13 @@ void UpdateH(double** H,double** H_old,double** H_tmp,double** W,int k,int n){
         }
 }
 
-/*Function to calculate the f norm of a subtraction*/
+/*Method for calculating the Frobenius distance between M1,M2*/
 double F_norm_squared_sub(double **M1,double **M2, const int rows, const int cols)
 {
     int i, j;
     double norm_squared;
     norm_squared = 0;
+    /*Iterating over all indices*/
     for (i = 0; i < rows; i++)
     {
         for (j = 0; j < cols; j++)
