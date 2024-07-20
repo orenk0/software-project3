@@ -283,12 +283,26 @@ void UpdateH(double** H,double** H_old,double** H_tmp,double** W,int k,int n){
         }
 }
 
+double F_norm_squared_sub(double **M1,double **M2, const int rows, const int cols)
+{
+    int i, j;
+    double norm_squared;
+    norm_squared = 0;
+    for (i = 0; i < rows; i++)
+    {
+        for (j = 0; j < cols; j++)
+        {
+            norm_squared += pow((M1)[i][j]-(M2)[i][j], 2);
+        }
+    }
+    return norm_squared;
+}
+
 /* Function to perform symmetric NMF */
 double** symnmfg(double** W,double** IH,int n,int k){
     /* Defining variables for future use: */
     double **H_old,**H_tmp,**H;
     int i,j,iter;
-    double criteria;
     /*init some var*/
     H_old = (double **)malloc(n * sizeof(double *));
     H_tmp = (double **)malloc(n * sizeof(double *));
@@ -315,19 +329,11 @@ double** symnmfg(double** W,double** IH,int n,int k){
     
     /* 1.4.2: Update H iteratively */
     iter = 0;
-    criteria = 0;
     do{
         /* Update H */
         UpdateH(H,H_old,H_tmp,W,k,n);
         iter++;
-        /* Check convergence */
-        criteria = 0;
-        for(i = 0 ; i < n ; i++){
-            for(j = 0 ; j < k ; j++){
-                criteria += (H[i][j] - H_old[i][j]) * (H[i][j] - H_old[i][j]);
-            }
-        }
-    }while(iter < max_iter && criteria > eps);
+    }while(iter < max_iter && F_norm_squared_sub(H,H_old,n,k)>=eps);
     /*freeing H_old,H_tmp*/
     for(i=0;i<n;i++){
         free(H_old[i]);
