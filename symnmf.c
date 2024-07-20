@@ -283,6 +283,7 @@ void UpdateH(double** H,double** H_old,double** H_tmp,double** W,int k,int n){
         }
 }
 
+/*Function to calculate the f norm of a subtraction*/
 double F_norm_squared_sub(double **M1,double **M2, const int rows, const int cols)
 {
     int i, j;

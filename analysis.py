@@ -11,16 +11,14 @@ np.random.seed(0)
 k = int(sys.argv[1])
 filename= sys.argv[2]
 X = pd.read_csv(filename, header=None)
-#get a legal random value
-def lran(x,m,k):
-    return np.random.uniform(0,2*math.sqrt(m/k))
-rfunc = np.vectorize(lran)
 X = X.values.tolist()
 W = ms.norm(X)
 m = np.average(np.array(W))
-H = np.zeros((len(W),k))
-H = rfunc(H,m,k)
-H = H.tolist()
+H = []
+for i in range(len(X)):
+    H.append([])
+    for j in range(k):
+        H[i].append(2 * np.sqrt(m / k) * np.random.uniform())
 M = ms.symnmf(W,H,k)
 
 clusters_nmf = np.argmax(M, axis=1)
@@ -34,7 +32,3 @@ clusters_km = np.asarray([np.argmin(np.linalg.norm(mu - X[i], axis=1)) for i in 
 #print(clusters)
 print("nmf:",'{:.4f}'.format(silhouette_score(X,clusters_nmf)))
 print("kmeans:",'{:.4f}'.format(silhouette_score(X,clusters_km)))
-
-
-    
-
